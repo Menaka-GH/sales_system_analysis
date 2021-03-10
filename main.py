@@ -4,12 +4,15 @@ import salesdb_backend
 
 class Sales:
 
+    #global sd
+
     def __init__(self, root):
         self.root = root
         self.root.title("Sales Database Management System")
         self.root.geometry("1300x6000")
         self.root.config(bg="grey")
 
+        #id = StringVar()
         Order_ID = StringVar()
         Product = StringVar()
         Quantity = StringVar()
@@ -23,6 +26,74 @@ class Sales:
                 root.destroy()
                 return
 
+        def clearData():
+            self.txtOrderId.delete(0,END)
+            self.txtProduct.delete(0,END)
+            self.txtQuantity.delete(0,END)
+            self.txtPrice.delete(0,END)
+            self.txtOrderdate.delete(0,END)
+            self.txtAddress.delete(0,END)
+
+        def addData():
+            #salesdb_backend.salesData()
+            if(len(Order_ID.get()) !=0):
+                salesdb_backend.addSalesData(Order_ID.get(), Product.get(), Quantity.get(), Price.get(), Order_date.get(), Address.get())
+                saleslist.delete(0,END)
+                #saleslist.insert()
+                #print(Order_ID.get())
+
+        def displayData():
+            saleslist.delete(0, END)
+            for row in salesdb_backend.viewsalesData():
+                #saleslist.insert(END,row,str(""))
+                saleslist.insert(END,row)
+
+        def SelectedRec(event):        
+
+            global sd  
+            searchOrder = saleslist.curselection()[0]
+            sd = saleslist.get(searchOrder)
+
+            self.txtOrderId.delete(0,END)
+            self.txtOrderId.insert(END, sd[1])
+            self.txtProduct.delete(0,END)
+            self.txtProduct.insert(END, sd[2])
+            self.txtQuantity.delete(0,END)
+            self.txtQuantity.insert(END, sd[3])
+            self.txtPrice.delete(0,END)
+            self.txtPrice.insert(END, sd[4])
+            self.txtOrderdate.delete(0,END)
+            self.txtOrderdate.insert(END, sd[5])
+            self.txtAddress.delete(0,END)
+            self.txtAddress.insert(END, sd[6])
+            
+
+        def deleteData():
+            #salesdb_backend.salesData()
+            if(len(Order_ID.get()) !=0):
+                salesdb_backend.deletesalesData(sd[0])
+                clearData()
+                displayData()    
+
+        def searchsalesData():
+            saleslist.delete(0,END) 
+            for row in salesdb_backend.searchData(Order_ID.get(), Product.get(), \
+                Quantity.get(), Price.get(), Order_date.get(), Address.get()):
+                saleslist.insert(END,row,str("")) 
+
+
+        def updatesalesData():
+            if(len(Order_ID.get()) !=0):
+                salesdb_backend.deletesalesData(sd[0]) 
+            if(len(Order_ID.get()) !=0):
+                salesdb_backend.addSalesData(Order_ID.get(), Product.get(), \
+                Quantity.get(), Price.get(), Order_date.get(), Address.get())
+                saleslist.delete(0,END)
+                saleslist.insert(END, (Order_ID.get(), Product.get(), \
+                Quantity.get(), Price.get(), Order_date.get(), Address.get()))           
+
+        def analysis():
+            salesdb_backend.salesAnalysis()
 
         #-----------------------------Frames--------------------------------
         MainFrame = Frame(self.root, bg="grey")
@@ -50,7 +121,7 @@ class Sales:
 
         #---------------------------------labels and entry widget-------------------------
 
-        self.lblOrderId = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Student ID:", padx=2, pady=2,bg="white")
+        self.lblOrderId = Label(DataFrameLEFT, font=('arial', 20, 'bold'), text="Order ID:", padx=2, pady=2,bg="white")
         self.lblOrderId.grid(row=0, column=0, sticky=W )
         self.txtOrderId = Entry(DataFrameLEFT, font=('arial', 20, 'bold'), textvariable=Order_ID, width=38)
         self.txtOrderId.grid(row=0, column=1)
@@ -84,6 +155,7 @@ class Sales:
         scrollbar.grid(row=0, column=1, sticky='ns')
 
         saleslist = Listbox(DataFrameRIGHT, width=41, height=16, font=('arial', 20, 'bold'), yscrollcommand=scrollbar.set )
+        saleslist.bind('<<ListboxSelect>>', SelectedRec)
         saleslist.grid(row=0, column=0, padx=8)
         scrollbar.config(command = saleslist.yview)
 
@@ -97,24 +169,23 @@ class Sales:
         self.btnDisplayData.grid(row=0, column=1)
 
 
-        self.btnclearData = Button(ButtonFrame, text="Clear", font=('arial', 20, 'bold'), height=1, width=10, bd=4,
-                                 command=clearData)
+        self.btnclearData = Button(ButtonFrame, text="Clear", font=('arial', 20, 'bold'), height=1, width=10, bd=4, command=clearData)
         self.btnclearData.grid(row=0, column=2)
 
-        self.btndeleteData = Button(ButtonFrame, text="Delete", font=('arial', 20, 'bold'), height=1, width=10, bd=4)
+        self.btndeleteData = Button(ButtonFrame, text="Delete", font=('arial', 20, 'bold'), height=1, width=10, bd=4, command=deleteData)
         self.btndeleteData.grid(row=0, column=3)
 
-        self.btnsearchData = Button(ButtonFrame, text="Search", font=('arial', 20, 'bold'), height=1, width=10, bd=4)
+        self.btnsearchData = Button(ButtonFrame, text="Search", font=('arial', 20, 'bold'), height=1, width=10, bd=4, command=searchsalesData)
         self.btnsearchData.grid(row=0, column=4)
 
-        self.btnupdateData = Button(ButtonFrame, text="Update", font=('arial', 20, 'bold'), height=1, width=10, bd=4)
-        self.btnupdateData.grid(row=0, column=4)
+        self.btnupdateData = Button(ButtonFrame, text="Update", font=('arial', 20, 'bold'), height=1, width=10, bd=4, command=updatesalesData)
+        self.btnupdateData.grid(row=0, column=5)
 
         self.btnexit = Button(ButtonFrame, text="Exit", font=('arial', 20, 'bold'), height=1, width=10, bd=4, command=Exit)
-        self.btnexit.grid(row=0, column=5)
+        self.btnexit.grid(row=0, column=6)
         self.btnexit = Button(ButtonFrame, text="Analyze", font=('arial', 20, 'bold'), height=1, width=10, bd=4,
                               command=analysis)
-        self.btnexit.grid(row=0, column=5)
+        self.btnexit.grid(row=0, column=7)
 
 if __name__=='__main__':
     root = Tk()
