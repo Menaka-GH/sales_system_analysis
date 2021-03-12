@@ -9,7 +9,7 @@ class Sales:
     def __init__(self, root):
         self.root = root
         self.root.title("Sales Database Management System")
-        self.root.geometry("1300x6000")
+        self.root.geometry("1300x6000+0+0")
         self.root.config(bg="grey")
 
         #id = StringVar()
@@ -111,7 +111,7 @@ class Sales:
         DataFrame = Frame(MainFrame, bd=2, width=1300, height=350, padx=20, pady=20, bg="grey", relief=RIDGE)
         DataFrame.pack(side=BOTTOM)
 
-        DataFrameLEFT = LabelFrame(DataFrame, bd=1, width=1000, height=600, padx=20, bg="white", relief=RIDGE,
+        DataFrameLEFT = LabelFrame(DataFrame, bd=1, width=1000, height=1200, padx=20, bg="white", relief=RIDGE,
                                    font=('arial', 20, 'bold'), text="Sales Info\n")
         DataFrameLEFT.pack(side=LEFT)
 
