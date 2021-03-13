@@ -8,12 +8,12 @@
 Libraries to import
 -------------------
 
-from tkinter import*
-import tkinter.messagebox
-import sqlite3
-import pandas as pd
-import os
-import matplotlib.pyplot
+1. from tkinter import*
+2. import tkinter.messagebox
+3. import sqlite3
+4. import pandas as pd
+5. import os
+6. import matplotlib.pyplot
 
 Class and functions: main.py
 ----------------------------
