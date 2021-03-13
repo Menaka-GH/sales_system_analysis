@@ -1,6 +1,8 @@
 import sqlite3
 import pandas as pd
+import os
 import matplotlib.pyplot as plt
+
 
 def salesData():
     con = sqlite3.connect("sales.db")
@@ -53,22 +55,52 @@ def updatedata():
     con.close()
 
 def salesAnalysis():
-    con = sqlite3.connect("sales.db")
-    cur = con.cursor()
-    query = pd.read_sql_query("""
-    SELECT
-        Order_ID, Price
-    FROM
-        salesTable
-    ;""", con)
-    # for row in df:
-    #   print(row)
-    # df.head()
-    df = pd.DataFrame(query)
-    df.plot(kind="bar", x="Order_ID", y="Price")
-    plt.show()
+    #df = pd.read_csv("Sales_Data\Sales_April_2019.csv")
+    #files = [file for file in os.listdir("Sales_Data")]
+    #creating empty dataframe
+    #all_months_data = pd.DataFrame()
 
-    con.commit()
-    con.close()
+    #for file in files:
+        #df= pd.read_csv("Sales_Data/" +file)
+        #merging to the empty dataframe
+        #all_months_data = pd.concat([all_months_data,df])
+        #checking-single csv file containing 12months data
+    #all_months_data.to_csv("all_data.csv", index=False)
+        #reading the updated datafram
+    all_data = pd.read_csv("all_data.csv")
+    #print(all_data.head())
+#Problem : 1, what was the best month for sales and how much?
+#add month column
+#non_df = all_data[all_data.isna().any(axis=1)]
+#removing Nan values in the data
+    all_data = all_data.dropna(how='all')
+#print(all_data.head())
+#removing rows, find 'or' and delete it
+#df_dummy=all_data[all_data['Order Date'].str[0:2]!='Or']
+#get first 2 chars
+#all_data['Month'] = all_data[all_data['Order Date'].str[0:2]!='Or']
+    all_data['Month'] = all_data['Order Date'].str[0:2]
+#pd.to_numeric(s, errors='coerce')
+#to turn the data, string to int
+#all_data['Month'] = all_data['Month'].astype('int')
+#print(all_data.head())
+#add sales column
+#change into inteer
+    all_data['Month'] = pd.to_numeric(all_data['Month'],errors='coerce')
+    all_data['Quantity Ordered'] = pd.to_numeric(all_data['Quantity Ordered'],errors='coerce')
+#all_data['Quantity Ordered'] = all_data['Quantity Ordered'].astype('int')
+    all_data['Price Each'] = pd.to_numeric(all_data['Price Each'],errors='coerce')
+#all_data['Price Each'] = all_data['Price Each'].astype('int')
+    all_data['Sales'] = all_data['Quantity Ordered'] * all_data['Price Each']
+    #print(all_data.head())
+#print(all_data.dtypes)
+#print(all_data.groupby('Month').sum())
+    months = range(1,13)
+       #print(months)
+    results = all_data.groupby('Month').sum()
+#print(results)
+    plt.bar(months, results['Sales'])
+    plt.show()
+   
 
 salesData()
