@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 import pandas as pd
 import os
@@ -5,10 +6,10 @@ import matplotlib.pyplot as plt
 
 
 def salesData():
-    con = sqlite3.connect("sales.db")
+    con = sqlite3.connect("salessys.db")
     cur = con.cursor()
     try:
-       cur.execute("CREATE TABLE IF NOT EXISTS salesTable (id INTEGER PRIMARY KEY, Order_ID text, Product text, Quantity text, Price text, Order_date text, Address text)")
+       cur.execute("CREATE TABLE IF NOT EXISTS salestable (id INTEGER PRIMARY KEY, Order_ID INTEGER, Product text, Quantity INTEGER, Price INTEGER, Order_date INTEGER, Address text)")
        print("conne")
        con.commit()
        con.close()
@@ -16,41 +17,53 @@ def salesData():
        print(("not conn"))
 
 def addSalesData(Order_ID, Product, Quantity, Price, Order_date, Address):
-    con = sqlite3.connect("sales.db")
+    con = sqlite3.connect("salessys.db")
     cur = con.cursor()
-    cur.execute("INSERT INTO salesTable VALUES(Null, ?, ?, ?, ?, ?, ?)",(Order_ID, Product, Quantity, Price, Order_date, Address))
+    cur.execute("INSERT INTO salestable VALUES(Null, ?, ?, ?, ?, ?, ?)",(Order_ID, Product, Quantity, Price, Order_date, Address))
     con.commit()
     con.close()
 
 def viewsalesData():
-    con = sqlite3.connect("sales.db")
+    con = sqlite3.connect("salessys.db")
     cur = con.cursor()
-    cur.execute("SELECT * FROM salesTable")
+    cur.execute("SELECT id, Order_ID, Product, Quantity, Price, Order_date, Address, (Quantity*Price) as sales FROM salestable")
     rows = cur.fetchall()
     con.close()
     return rows
 
 def deletesalesData(id):
-    con = sqlite3.connect("sales.db")
+    con = sqlite3.connect("salessys.db")
     cur = con.cursor()
-    cur.execute("DELETE FROM salesTable WHERE id=?", (id,))
+    cur.execute("DELETE FROM salestable WHERE id=?", (id,))
     con.commit()
     con.close()
 
 def searchData(Order_ID="",Product="", Quantity="",Price="", Order_date="", Address=""):
-    con = sqlite3.connect("sales.db")
+    con = sqlite3.connect("salessys.db")
     cur = con.cursor()
-    cur.execute("SELECT * FROM salesTable WHERE Order_ID=? OR Product=? OR Quantity=? OR Price=? OR Order_date=? OR Address=? ", (Order_ID, Product, Quantity, Price, Order_date, Address))
+    cur.execute("SELECT * FROM salestable WHERE Order_ID=? OR Product=? OR Quantity=? OR Price=? OR Order_date=? OR Address=? ", (Order_ID, Product, Quantity, Price, Order_date, Address))
     rows = cur.fetchall()
     con.close()
     return rows
 
 def updatedata():
-    con = sqlite3.connect("sales.db")
+    con = sqlite3.connect("salessys.db")
     cur = con.cursor()
     cur.execute(
-        "UPDATE salesTable SET Order_ID=?, Product=?, Quantity=?, Price=?, Order_date=?, Address=? ",\
+        "UPDATE salestable SET Order_ID=?, Product=?, Quantity=?, Price=?, Order_date=?, Address=? ",\
         (Order_ID, Product, Quantity, Price, Order_date, Address, Id))
+    con.commit()
+    con.close()
+
+def salesAnalysis1():
+    con = sqlite3.connect("salessys.db")
+    cur = con.cursor()
+    #cur.execute("select Order_ID, (Quantity*Price) as sales from salestable")
+    cur.execute("select strftime('%m', datetime(Order_date, 'unixepoch')) as month from salestable")
+    
+    months = cur.fetchall()
+    for month in months:
+        print(month)
     con.commit()
     con.close()
 
@@ -99,6 +112,9 @@ def salesAnalysis():
        #print(months)
     results = all_data.groupby('Month').sum()
 #print(results)
+    plt.xlabel("Months")
+    plt.ylabel("Sales")
+    plt.title('Best month for Sales')
     plt.bar(months, results['Sales'])
     plt.show()
    
