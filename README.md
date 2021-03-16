@@ -32,7 +32,7 @@ salesAnalysis()   - to analyze the data from the csv file "all_data". I have vis
 
 How to run the application:
 --------------------------
-1. Enter the data in the textboxes for order id, product, quantity, price etc
+1. Run the file "main.py".Enter the data in the textboxes for order id, product, quantity, price etc
 2. Click "Add New"
 3. If you click "Display", it will show the records in the "Sales Details" frame
 4. To clear the data in the textboxes, click "clear".
