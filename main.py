@@ -39,7 +39,7 @@ class Sales:
             if(len(Order_ID.get()) !=0):
                 salesdb_backend.addSalesData(Order_ID.get(), Product.get(), Quantity.get(), Price.get(), Order_date.get(), Address.get())
                 saleslist.delete(0,END)
-                #saleslist.insert()
+                saleslist.insert(END,Order_ID.get(), Product.get(), Quantity.get(), Price.get(), Order_date.get(), Address.get())
                 #print(Order_ID.get())
 
         def displayData():
